@@ -17,8 +17,12 @@ az group delete --name $rgName --yes --no-wait
 # Create a resource group.
 az group create --name $rgName --location $regionName
 
-# Create a new virtual machine, this creates SSH keys.
-az vm create --resource-group $rgName --name $prefix'srvSI0' --image UbuntuLTS  --size Standard_DS1 --admin-username $userName --generate-ssh-keys
+# Create a new virtual machine with generated SSH Keys.
+if [ ! -f ~/.ssh/id_rsa.pub ]; then
+    echo "create VM srvSI0 in order to generate SSH keys"
+    az vm create --resource-group $rgName --name $prefix'srvSI0' --image UbuntuLTS  --size Standard_DS1 --admin-username $userName --generate-ssh-keys
+    exit 0
+fi
 
 # create additional 5 VMs with the same ssh key
 for i in `seq 1 3`; do
